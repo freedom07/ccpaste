@@ -99,6 +99,12 @@ cp -r .build/release/ccpaste.app /Applications/
 > xattr -cr /Applications/ccpaste.app
 > ```
 
+### 삭제
+
+```bash
+killall ccpaste; rm -rf /Applications/ccpaste.app
+```
+
 ### 요구사항
 
 - macOS 13.0 (Ventura) 이상

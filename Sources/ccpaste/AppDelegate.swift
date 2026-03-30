@@ -94,6 +94,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: - Pipeline
 
+    static let terminalBundleIDs: Set<String> = [
+        "com.apple.Terminal",
+        "com.googlecode.iterm2",
+        "dev.warp.Warp-Stable",
+        "com.mitchellh.ghostty",
+        "co.zeit.hyper",
+        "com.github.wez.wezterm",
+        "net.kovidgoyal.kitty",
+        "io.alacritty",
+    ]
+
     @objc func convertClipboard() {
         // 1. Read plain text from clipboard
         guard let text = ClipboardManager.readPlainText(), !text.isEmpty else {
@@ -134,6 +145,14 @@ private func hotKeyCallback(
     userData: UnsafeMutableRawPointer?
 ) -> OSStatus {
     guard let userData = userData else { return OSStatus(eventNotHandledErr) }
+
+    // Pass the event through to other apps when a terminal is not focused
+    guard let frontApp = NSWorkspace.shared.frontmostApplication,
+          let bundleID = frontApp.bundleIdentifier,
+          AppDelegate.terminalBundleIDs.contains(bundleID) else {
+        return OSStatus(eventNotHandledErr)
+    }
+
     let appDelegate = Unmanaged<AppDelegate>.fromOpaque(userData).takeUnretainedValue()
 
     DispatchQueue.main.async {

@@ -99,6 +99,12 @@ Download the latest `.app.zip` from [Releases](https://github.com/freedom07/ccpa
 > xattr -cr /Applications/ccpaste.app
 > ```
 
+### Uninstall
+
+```bash
+killall ccpaste; rm -rf /Applications/ccpaste.app
+```
+
 ### Requirements
 
 - macOS 13.0 (Ventura) or later
