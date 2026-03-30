@@ -37,15 +37,22 @@ final class ToastWindow: NSPanel {
         hidesOnDeactivate = false
         collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle]
 
-        // Blur background — this IS the contentView, no extra frame
+        // Transparent container — the window draws nothing
+        let container = NSView(frame: frame)
+        container.wantsLayer = true
+        container.layer?.backgroundColor = .clear
+        contentView = container
+
+        // Blur pill — only visible element
         let blur = NSVisualEffectView(frame: frame)
         blur.material = .popover
         blur.state = .active
         blur.blendingMode = .behindWindow
         blur.wantsLayer = true
-        blur.layer?.cornerRadius = 10
+        blur.layer?.cornerRadius = 22  // pill shape (height / 2)
         blur.layer?.masksToBounds = true
-        contentView = blur
+        blur.autoresizingMask = [.width, .height]
+        container.addSubview(blur)
 
         // Stack: icon + label
         let stack = NSStackView()
