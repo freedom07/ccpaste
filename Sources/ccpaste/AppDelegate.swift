@@ -6,15 +6,37 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
     private let toast = ToastWindow()
     private var hotKeyRef: EventHotKeyRef?
+    private var eventHandlerRef: EventHandlerRef?
+    private var appObserver: NSObjectProtocol?
+
+    private static let terminalBundleIDs: Set<String> = [
+        "com.apple.Terminal",
+        "com.googlecode.iterm2",
+        "dev.warp.Warp-Stable",
+        "com.mitchellh.ghostty",
+        "co.zeit.hyper",
+        "com.github.wez.wezterm",
+        "net.kovidgoyal.kitty",
+        "io.alacritty",
+    ]
 
     // MARK: - App Lifecycle
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupMenuBar()
-        registerHotKey()
+        installEventHandler()
+        observeAppActivation()
+
+        // Register hotkey if a terminal is already focused
+        if Self.isTerminalFocused() {
+            registerHotKey()
+        }
     }
 
     func applicationWillTerminate(_ notification: Notification) {
+        if let observer = appObserver {
+            NSWorkspace.shared.notificationCenter.removeObserver(observer)
+        }
         unregisterHotKey()
     }
 
@@ -36,15 +58,35 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem.menu = menu
     }
 
+    // MARK: - App Activation Observer
+
+    private func observeAppActivation() {
+        appObserver = NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.didActivateApplicationNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            guard let self = self else { return }
+            guard let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+                  let bundleID = app.bundleIdentifier else { return }
+
+            if Self.terminalBundleIDs.contains(bundleID) {
+                self.registerHotKey()
+            } else {
+                self.unregisterHotKey()
+            }
+        }
+    }
+
+    private static func isTerminalFocused() -> Bool {
+        guard let frontApp = NSWorkspace.shared.frontmostApplication,
+              let bundleID = frontApp.bundleIdentifier else { return false }
+        return terminalBundleIDs.contains(bundleID)
+    }
+
     // MARK: - Global Hot Key (Carbon)
 
-    private func registerHotKey() {
-        // Hot key ID
-        var hotKeyID = EventHotKeyID()
-        hotKeyID.signature = OSType(0x43435054)  // "CCPT"
-        hotKeyID.id = 1
-
-        // Install handler
+    private func installEventHandler() {
         var eventType = EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: UInt32(kEventHotKeyPressed))
         let status = InstallEventHandler(
             GetApplicationEventTarget(),
@@ -52,16 +94,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             1,
             &eventType,
             UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque()),
-            nil
+            &eventHandlerRef
         )
 
-        guard status == noErr else {
+        if status != noErr {
             showAlert("Failed to install hot key handler (error: \(status))")
-            return
         }
+    }
 
-        // Register Cmd+Shift+C
-        // Key code 8 = 'C', modifiers: cmdKey + shiftKey
+    private func registerHotKey() {
+        guard hotKeyRef == nil else { return }
+
+        var hotKeyID = EventHotKeyID()
+        hotKeyID.signature = OSType(0x43435054)  // "CCPT"
+        hotKeyID.id = 1
+
         let modifiers = UInt32(cmdKey | shiftKey)
         let result = RegisterEventHotKey(
             UInt32(kVK_ANSI_C),
@@ -93,17 +140,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     // MARK: - Pipeline
-
-    static let terminalBundleIDs: Set<String> = [
-        "com.apple.Terminal",
-        "com.googlecode.iterm2",
-        "dev.warp.Warp-Stable",
-        "com.mitchellh.ghostty",
-        "co.zeit.hyper",
-        "com.github.wez.wezterm",
-        "net.kovidgoyal.kitty",
-        "io.alacritty",
-    ]
 
     @objc func convertClipboard() {
         // 1. Read plain text from clipboard
@@ -145,14 +181,6 @@ private func hotKeyCallback(
     userData: UnsafeMutableRawPointer?
 ) -> OSStatus {
     guard let userData = userData else { return OSStatus(eventNotHandledErr) }
-
-    // Pass the event through to other apps when a terminal is not focused
-    guard let frontApp = NSWorkspace.shared.frontmostApplication,
-          let bundleID = frontApp.bundleIdentifier,
-          AppDelegate.terminalBundleIDs.contains(bundleID) else {
-        return OSStatus(eventNotHandledErr)
-    }
-
     let appDelegate = Unmanaged<AppDelegate>.fromOpaque(userData).takeUnretainedValue()
 
     DispatchQueue.main.async {

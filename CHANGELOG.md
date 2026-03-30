@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-03-30
+
+### Changed
+- Hotkey only activates when a terminal app is focused (Terminal, iTerm2, Ghostty, Warp, Hyper, WezTerm, Kitty, Alacritty)
+- No longer intercepts `Cmd+Shift+C` in browsers and other apps (e.g., Chrome Inspect Element, Cursor external terminal)
+
 ## [1.0.0] - 2026-03-30
 
 ### Added
@@ -22,5 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Toast notifications for conversion feedback
 - Support for Notion, Slack, Google Docs, Apple Mail
 
-[Unreleased]: https://github.com/freedom07/ccpaste/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/freedom07/ccpaste/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/freedom07/ccpaste/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/freedom07/ccpaste/releases/tag/v1.0.0
