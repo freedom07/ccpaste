@@ -1,5 +1,7 @@
 <div align="center">
 
+<p>English | <a href="README.ko.md">한국어</a></p>
+
 # ccpaste
 
 **Claude Code terminal output → Rich text clipboard**
