@@ -74,6 +74,12 @@ Copy output from Claude Code (or any terminal) and paste it into Notion, Slack, 
 
 ## Installation
 
+### Quick Install (one line)
+
+```bash
+curl -sL https://github.com/freedom07/ccpaste/releases/latest/download/ccpaste.app.zip -o /tmp/ccpaste.zip && unzip -o /tmp/ccpaste.zip -d /Applications && rm /tmp/ccpaste.zip && xattr -cr /Applications/ccpaste.app
+```
+
 ### Build from Source
 
 ```bash

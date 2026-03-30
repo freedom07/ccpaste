@@ -74,6 +74,12 @@ Claude Code(또는 터미널)의 출력을 복사해서 Notion, Slack, Google Do
 
 ## 설치
 
+### 한 줄 설치
+
+```bash
+curl -sL https://github.com/freedom07/ccpaste/releases/latest/download/ccpaste.app.zip -o /tmp/ccpaste.zip && unzip -o /tmp/ccpaste.zip -d /Applications && rm /tmp/ccpaste.zip && xattr -cr /Applications/ccpaste.app
+```
+
 ### 소스에서 빌드
 
 ```bash
