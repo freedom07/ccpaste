@@ -209,15 +209,6 @@ Slack does not support HTML table paste. This is a Slack limitation. Tables will
 If you have many menu bar icons, ccpaste's icon may be hidden behind the notch. The hotkey (<kbd>⌘</kbd><kbd>⇧</kbd><kbd>C</kbd>) still works regardless.
 </details>
 
-## Roadmap
-
-- [ ] Settings window (custom hotkey, launch at login)
-- [ ] Auto-detect terminal copy (no hotkey needed)
-- [ ] Complex box-drawing table support
-- [ ] Code signing + notarization
-- [ ] Homebrew Cask (`brew install --cask ccpaste`)
-- [ ] Syntax highlighting in code blocks
-
 ## Contributing
 
 Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a PR.
