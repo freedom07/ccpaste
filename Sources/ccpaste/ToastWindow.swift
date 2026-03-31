@@ -29,7 +29,7 @@ final class ToastWindow: NSPanel {
             defer: false
         )
 
-        level = .statusBar
+        level = NSWindow.Level(Int(CGShieldingWindowLevel()))
         isOpaque = false
         hasShadow = true
         backgroundColor = .clear
@@ -81,6 +81,10 @@ final class ToastWindow: NSPanel {
     func show(_ message: String, isError: Bool = false) {
         fadeTimer?.invalidate()
 
+        // Cancel any in-progress fade-out animation
+        animator().alphaValue = 0.0
+        NSAnimationContext.current.duration = 0
+
         // Icon
         let symbolName = isError ? "xmark.circle.fill" : "checkmark.circle.fill"
         let tintColor: NSColor = isError ? .systemRed : .systemGreen
@@ -98,7 +102,8 @@ final class ToastWindow: NSPanel {
         let windowSize = NSSize(width: windowWidth, height: 44)
 
         // Position at bottom-center of screen
-        if let screen = NSScreen.main {
+        let screen = NSScreen.main ?? NSScreen.screens.first
+        if let screen = screen {
             let screenFrame = screen.visibleFrame
             let x = screenFrame.midX - windowSize.width / 2
             let y = screenFrame.minY + 80

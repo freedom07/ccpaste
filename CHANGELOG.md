@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-03-31
+
+### Fixed
+- Toast notification not appearing reliably (raised window level, added screen fallback, fixed animation conflicts)
+
 ## [1.1.0] - 2026-03-30
 
 ### Changed
@@ -28,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Toast notifications for conversion feedback
 - Support for Notion, Slack, Google Docs, Apple Mail
 
-[Unreleased]: https://github.com/freedom07/ccpaste/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/freedom07/ccpaste/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/freedom07/ccpaste/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/freedom07/ccpaste/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/freedom07/ccpaste/releases/tag/v1.0.0
